@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NFC Reader</string>
+    <string name="tap_card">Tap your card here</string>
+    <string name="badge_verified">Badge Verified</string>
+    <string name="badge_unverified">Badge Unverified</string>
+    <string name="nfc_not_supported">NFC is not supported</string>
+    <string name="nfc_icon_description">NFC Icon</string>
+</resources>
