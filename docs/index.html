@@ -1,862 +1,522 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mason Kelley's Office</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --black: #070707;
-            --muted: #757575;
-            --gold: #d6ad42;
-            --gold-soft: #f4d98d;
-            --green: #35c759;
-            --red: #ff3b30;
-            --panel: rgba(255, 255, 255, 0.86);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-            background:
-                radial-gradient(circle at 50% 14%, rgba(214, 173, 66, 0.24), transparent 34%),
-                linear-gradient(145deg, #181818 0%, #050505 52%, #101010 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 22px;
-            color: var(--black);
-            overflow: hidden;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
-            background-size: 44px 44px;
-            mask-image: linear-gradient(to bottom, black, transparent 76%);
-            pointer-events: none;
-        }
-
-        .app-shell {
-            width: min(430px, 100%);
-            position: relative;
-            z-index: 1;
-        }
-
-        .device {
-            background: var(--panel);
-            border: 1px solid rgba(255,255,255,0.45);
-            border-radius: 34px;
-            padding: 22px;
-            box-shadow:
-                0 30px 80px rgba(0,0,0,0.48),
-                inset 0 1px 0 rgba(255,255,255,0.75);
-            backdrop-filter: blur(24px);
-            transition: transform 0.4s ease;
-        }
-
-        .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 22px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 0;
-        }
-
-        .logo {
-            width: 54px;
-            height: 54px;
-            border-radius: 16px;
-            overflow: hidden;
-            background: #000;
-            box-shadow: 0 10px 24px rgba(0,0,0,0.28);
-            border: 1px solid rgba(214,173,66,0.38);
-            flex: 0 0 auto;
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .title {
-            font-size: 19px;
-            line-height: 1.1;
-            font-weight: 750;
-        }
-
-        .subtitle {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 4px;
-            letter-spacing: 0.4px;
-        }
-
-        .lock-button {
-            width: 44px;
-            height: 44px;
-            border: none;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: #111111;
-            color: white;
-            flex: 0 0 auto;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-        }
-
-        .lock-button svg {
-            width: 22px;
-            height: 22px;
-            stroke-width: 2.5;
-        }
-
-        .wallet-stage {
-            min-height: 430px;
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,248,248,0.78)),
-                radial-gradient(circle at center, rgba(214,173,66,0.18), transparent 54%);
-            border: 1px solid rgba(0,0,0,0.06);
-            border-radius: 28px;
-            padding: 24px;
-            display: grid;
-            grid-template-rows: auto 1fr auto auto;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .status-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .status-text {
-            font-size: 13px;
-            color: var(--muted);
-            font-weight: 650;
-        }
-
-        .message-text {
-            margin-top: 4px;
-            font-size: 25px;
-            line-height: 1.05;
-            font-weight: 800;
-        }
-
-        .result-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: #efefef;
-            color: var(--black);
-            transition: background 0.24s ease, color 0.24s ease, transform 0.24s ease;
-            flex: 0 0 auto;
-        }
-
-        .result-icon svg {
-            width: 25px;
-            height: 25px;
-            stroke-width: 3;
-        }
-
-        .badge-area {
-            position: relative;
-            display: grid;
-            place-items: center;
-            perspective: 900px;
-        }
-
-        .halo {
-            position: absolute;
-            width: 224px;
-            height: 224px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(214,173,66,0.25), transparent 66%);
-            transform: scale(0.82);
-            opacity: 0.82;
-            transition: transform 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.35s ease;
-        }
-
-        .badge-card {
-            width: min(304px, 94%);
-            aspect-ratio: 1.62;
-            border: none;
-            border-radius: 24px;
-            padding: 22px;
-            color: white;
-            background:
-                linear-gradient(135deg, rgba(255,255,255,0.24), transparent 38%),
-                linear-gradient(145deg, #151515 0%, #222222 55%, #050505 100%);
-            box-shadow:
-                0 26px 50px rgba(0,0,0,0.28),
-                inset 0 1px 0 rgba(255,255,255,0.22);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transform: translateY(0) rotateX(0) rotateY(0) scale(1);
-            transition:
-                transform 0.56s cubic-bezier(.2,.8,.2,1),
-                box-shadow 0.56s ease,
-                background 0.28s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .badge-card:hover {
-            transform: translateY(-6px) rotateX(5deg) rotateY(-4deg) scale(1.015);
-            box-shadow:
-                0 34px 64px rgba(0,0,0,0.32),
-                inset 0 1px 0 rgba(255,255,255,0.25);
-        }
-
-        .badge-card:active {
-            transform: translateY(-2px) scale(0.98);
-        }
-
-        .badge-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(105deg, transparent 26%, rgba(255,255,255,0.30) 45%, transparent 64%);
-            transform: translateX(-140%);
-            opacity: 0;
-        }
-
-        .badge-card::after {
-            content: "";
-            position: absolute;
-            inset: auto 18px 18px;
-            height: 44px;
-            border-radius: 14px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .card-logo {
-            position: absolute;
-            right: 14px;
-            bottom: 10px;
-            width: 130px;
-            height: 72px;
-            object-fit: cover;
-            border-radius: 12px;
-            opacity: 0.18;
-            filter: saturate(1.1) contrast(1.15);
-            z-index: 1;
-        }
-
-        .badge-chip {
-            width: 42px;
-            height: 32px;
-            border-radius: 9px;
-            background:
-                linear-gradient(90deg, transparent 32%, rgba(0,0,0,0.14) 32%, rgba(0,0,0,0.14) 36%, transparent 36%),
-                linear-gradient(#f5d77b, #bd8f26);
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18);
-            position: relative;
-            z-index: 2;
-        }
-
-        .badge-name {
-            position: absolute;
-            left: 22px;
-            bottom: 30px;
-            z-index: 3;
-            text-align: left;
-        }
-
-        .badge-name strong {
-            display: block;
-            font-size: 18px;
-            letter-spacing: 0.2px;
-        }
-
-        .badge-name span {
-            display: block;
-            margin-top: 5px;
-            font-size: 11px;
-            color: rgba(255,255,255,0.64);
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-        }
-
-        .tap-rings {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            width: 38px;
-            height: 38px;
-            opacity: 0.82;
-            z-index: 3;
-        }
-
-        .tap-rings span {
-            position: absolute;
-            inset: 0;
-            border: 2px solid rgba(255,255,255,0.58);
-            border-left-color: transparent;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            transform: rotate(45deg) scale(var(--s));
-        }
-
-        .tap-rings span:nth-child(1) { --s: 0.45; }
-        .tap-rings span:nth-child(2) { --s: 0.72; }
-        .tap-rings span:nth-child(3) { --s: 1; }
-
-        .scan-line {
-            position: absolute;
-            left: 20px;
-            right: 20px;
-            top: 50%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.96), transparent);
-            box-shadow: 0 0 24px rgba(255,255,255,0.9);
-            opacity: 0;
-            transform: translateY(-76px);
-            z-index: 4;
-        }
-
-        .actions {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        .face-button {
-            min-height: 54px;
-            border: none;
-            border-radius: 17px;
-            background: #111111;
-            color: white;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 0.7px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.18);
-            transition: transform 0.2s ease, background 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .face-button:active {
-            transform: scale(0.98);
-        }
-
-        .face-button svg {
-            width: 20px;
-            height: 20px;
-            stroke-width: 2.6;
-        }
-
-        .tap-hint,
-        .last-access {
-            text-align: center;
-            font-size: 13px;
-            font-weight: 650;
-        }
-
-        .tap-hint {
-            color: rgba(0,0,0,0.44);
-            margin-top: 2px;
-        }
-
-        .last-access {
-            color: rgba(0,0,0,0.52);
-            min-height: 18px;
-            margin-top: 8px;
-            transition: opacity 0.35s ease;
-        }
-
-        .fine-print {
-            margin-top: 16px;
-            color: rgba(255,255,255,0.54);
-            text-align: center;
-            font-size: 12px;
-            letter-spacing: 0.2px;
-        }
-
-        .face-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.48);
-            display: grid;
-            place-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.24s ease;
-            z-index: 5;
-            padding: 24px;
-        }
-
-        .face-modal.is-visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .face-panel {
-            width: min(310px, 100%);
-            border-radius: 30px;
-            background: rgba(245,245,245,0.92);
-            border: 1px solid rgba(255,255,255,0.55);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.42);
-            backdrop-filter: blur(26px);
-            padding: 28px 24px 24px;
-            text-align: center;
-            transform: translateY(18px) scale(0.96);
-            transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
-        }
-
-        .face-modal.is-visible .face-panel {
-            transform: translateY(0) scale(1);
-        }
-
-        .face-scanner {
-            width: 118px;
-            height: 118px;
-            margin: 0 auto 18px;
-            border-radius: 32px;
-            border: 3px solid rgba(0,0,0,0.75);
-            position: relative;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
-            background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(230,230,230,0.58));
-        }
-
-        .face-scanner::before {
-            content: "";
-            position: absolute;
-            left: 12px;
-            right: 12px;
-            height: 2px;
-            background: var(--gold);
-            box-shadow: 0 0 22px rgba(214,173,66,0.95);
-            animation: faceScan 1.25s ease-in-out infinite;
-        }
-
-        .face-scanner svg {
-            width: 72px;
-            height: 72px;
-            stroke-width: 1.8;
-            opacity: 0.78;
-        }
-
-        .face-title {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 6px;
-        }
-
-        .face-copy {
-            font-size: 13px;
-            color: var(--muted);
-            font-weight: 650;
-        }
-
-        .is-processing .halo {
-            transform: scale(1.22);
-            opacity: 1;
-        }
-
-        .is-processing .badge-card {
-            transform: translateY(-18px) rotateX(12deg) scale(1.04);
-            box-shadow:
-                0 38px 75px rgba(0,0,0,0.34),
-                inset 0 1px 0 rgba(255,255,255,0.3);
-        }
-
-        .is-processing .badge-card::before {
-            animation: cardShine 0.95s ease forwards;
-            opacity: 1;
-        }
-
-        .is-processing .scan-line {
-            animation: scan 0.95s cubic-bezier(.4,0,.2,1) forwards;
-            opacity: 1;
-        }
-
-        .is-approved .result-icon,
-        .face-modal.is-approved .face-scanner {
-            background: var(--green);
-            color: white;
-        }
-
-        .is-denied .result-icon,
-        .face-modal.is-denied .face-scanner {
-            background: var(--red);
-            color: white;
-        }
-
-        .is-approved .result-icon,
-        .is-denied .result-icon {
-            transform: scale(1.08);
-        }
-
-        .is-approved .badge-card {
-            background:
-                linear-gradient(135deg, rgba(255,255,255,0.22), transparent 38%),
-                linear-gradient(145deg, #102a18 0%, #168235 58%, #062d13 100%);
-        }
-
-        .is-denied .badge-card {
-            background:
-                linear-gradient(135deg, rgba(255,255,255,0.18), transparent 38%),
-                linear-gradient(145deg, #3c1110 0%, #b12621 58%, #2b0504 100%);
-            animation: deniedShake 0.44s ease 0.66s;
-        }
-
-        .is-fading {
-            animation: softReset 0.42s ease;
-        }
-
-        @keyframes cardShine {
-            to { transform: translateX(140%); }
-        }
-
-        @keyframes scan {
-            0% { transform: translateY(-76px); opacity: 0; }
-            15% { opacity: 1; }
-            100% { transform: translateY(76px); opacity: 0; }
-        }
-
-        @keyframes faceScan {
-            0%, 100% { transform: translateY(-46px); opacity: 0.35; }
-            50% { transform: translateY(46px); opacity: 1; }
-        }
-
-        @keyframes deniedShake {
-            0%, 100% { transform: translateY(-18px) rotateX(12deg) translateX(0) scale(1.04); }
-            25% { transform: translateY(-18px) rotateX(12deg) translateX(-8px) scale(1.04); }
-            50% { transform: translateY(-18px) rotateX(12deg) translateX(8px) scale(1.04); }
-            75% { transform: translateY(-18px) rotateX(12deg) translateX(-5px) scale(1.04); }
-        }
-
-        @keyframes softReset {
-            0% { opacity: 1; transform: scale(1); }
-            45% { opacity: 0.78; transform: scale(0.985); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        @media (max-width: 430px) {
-            body {
-                padding: 14px;
-            }
-
-            .device {
-                border-radius: 28px;
-                padding: 16px;
-            }
-
-            .wallet-stage {
-                min-height: 420px;
-                padding: 20px;
-            }
-
-            .message-text {
-                font-size: 22px;
-            }
-
-            .title {
-                font-size: 17px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mason Kelley's Office</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050505;--panel:rgba(17,17,17,.86);--panel-soft:rgba(255,255,255,.08);--text:#f7f1e6;--muted:rgba(247,241,230,.62);--line:rgba(255,255,255,.12);--gold:#d6ad42;--gold-soft:#f2d78a;--green:#35c759;--red:#ff3b30;--blue:#0a84ff}
+body.light{--bg:#111;--panel:rgba(255,255,255,.88);--panel-soft:rgba(0,0,0,.06);--text:#070707;--muted:rgba(0,0,0,.55);--line:rgba(0,0,0,.10)}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;color:var(--text);background:radial-gradient(circle at 50% 8%,rgba(214,173,66,.28),transparent 36%),linear-gradient(145deg,#1a1712 0%,var(--bg) 52%,#101010 100%);overflow:hidden}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 78%);pointer-events:none}
+.app{width:min(440px,100%);position:relative;z-index:1}
+.device{border-radius:34px;padding:20px;background:var(--panel);border:1px solid rgba(255,255,255,.18);box-shadow:0 32px 90px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.18);backdrop-filter:blur(26px);overflow:hidden;position:relative}
+.device:before{content:"";position:absolute;inset:-60px -40px auto auto;width:220px;height:220px;background:radial-gradient(circle,rgba(214,173,66,.20),transparent 68%);pointer-events:none}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:2;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:56px;height:56px;border-radius:17px;overflow:hidden;background:#000;border:1px solid rgba(214,173,66,.42);box-shadow:0 12px 28px rgba(0,0,0,.28);flex:0 0 auto}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
+.title{font-size:19px;line-height:1.08;font-weight:800;color:var(--text)}
+.subtitle{font-size:12px;color:var(--muted);margin-top:4px;font-weight:650}
+.icon-row{display:flex;gap:8px;flex:0 0 auto}
+.icon-btn{width:42px;height:42px;border:none;border-radius:50%;background:var(--panel-soft);color:var(--text);display:grid;place-items:center;cursor:pointer;transition:transform .2s ease,background .2s ease;-webkit-tap-highlight-color:transparent}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn svg{width:21px;height:21px;stroke-width:2.5}
+.stage{min-height:560px;border-radius:28px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04)),radial-gradient(circle at center,rgba(214,173,66,.16),transparent 58%);border:1px solid var(--line);display:grid;grid-template-rows:auto auto 1fr auto auto;gap:16px;position:relative;overflow:hidden}
+.stage-watermark{position:absolute;right:-34px;top:110px;width:240px;height:240px;object-fit:cover;border-radius:28px;opacity:.055;filter:saturate(1.2) contrast(1.25);pointer-events:none}
+.status-row{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:2}
+.status-text{font-size:13px;color:var(--muted);font-weight:700}
+.message-text{margin-top:4px;font-size:25px;line-height:1.05;font-weight:850;color:var(--text)}
+.result-icon{width:46px;height:46px;border-radius:50%;background:var(--panel-soft);color:var(--text);display:grid;place-items:center;transition:background .24s ease,color .24s ease,transform .24s ease;flex:0 0 auto}
+.result-icon svg{width:25px;height:25px;stroke-width:3}
+.hours-pill{width:fit-content;max-width:100%;display:flex;align-items:center;gap:8px;border-radius:999px;padding:8px 11px;background:var(--panel-soft);color:var(--muted);font-size:12px;font-weight:750;position:relative;z-index:2}
+.hours-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(53,199,89,.8)}
+.hours-pill.closed .hours-dot{background:var(--gold);box-shadow:0 0 14px rgba(214,173,66,.8)}
+.badge-area{position:relative;display:grid;place-items:center;perspective:900px;z-index:2}
+.halo{position:absolute;width:228px;height:228px;border-radius:50%;background:radial-gradient(circle,rgba(214,173,66,.28),transparent 66%);transform:scale(.82);opacity:.82;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .35s ease}
+.badge-card{width:min(310px,96%);aspect-ratio:1.62;border:none;border-radius:24px;padding:22px;color:white;background:linear-gradient(135deg,rgba(255,255,255,.24),transparent 38%),linear-gradient(145deg,#151515 0%,#242424 55%,#050505 100%);box-shadow:0 28px 54px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.22);position:relative;overflow:hidden;cursor:pointer;transform:translateY(0) rotateX(0) rotateY(0) scale(1);transition:transform .56s cubic-bezier(.2,.8,.2,1),box-shadow .56s ease,background .28s ease;-webkit-tap-highlight-color:transparent}
+.badge-card:hover{transform:translateY(-6px) rotateX(5deg) rotateY(-4deg) scale(1.015);box-shadow:0 36px 68px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.25)}
+.badge-card:active{transform:translateY(-2px) scale(.98)}
+.badge-card:before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 26%,rgba(255,255,255,.30) 45%,transparent 64%);transform:translateX(-140%);opacity:0}
+.badge-card:after{content:"";position:absolute;inset:auto 18px 18px;height:44px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08)}
+.card-logo{position:absolute;right:14px;bottom:10px;width:136px;height:74px;object-fit:cover;border-radius:12px;opacity:.18;filter:saturate(1.1) contrast(1.15);z-index:1}
+.badge-chip{width:42px;height:32px;border-radius:9px;background:linear-gradient(90deg,transparent 32%,rgba(0,0,0,.14) 32%,rgba(0,0,0,.14) 36%,transparent 36%),linear-gradient(#f5d77b,#bd8f26);box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);position:relative;z-index:2}
+.badge-name{position:absolute;left:22px;bottom:30px;z-index:3;text-align:left}
+.badge-name strong{display:block;font-size:18px;letter-spacing:.2px}
+.badge-name span{display:block;margin-top:5px;font-size:11px;color:rgba(255,255,255,.64);letter-spacing:1.2px;text-transform:uppercase}
+.tap-rings{position:absolute;right:20px;top:20px;width:38px;height:38px;opacity:.82;z-index:3}
+.tap-rings span{position:absolute;inset:0;border:2px solid rgba(255,255,255,.58);border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;transform:rotate(45deg) scale(var(--s))}
+.tap-rings span:nth-child(1){--s:.45}.tap-rings span:nth-child(2){--s:.72}.tap-rings span:nth-child(3){--s:1}
+.scan-line{position:absolute;left:20px;right:20px;top:50%;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.96),transparent);box-shadow:0 0 24px rgba(255,255,255,.9);opacity:0;transform:translateY(-76px);z-index:4}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:2}
+.action-btn{min-height:54px;border:none;border-radius:17px;cursor:pointer;font-size:12px;font-weight:850;letter-spacing:.55px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .2s ease,background .2s ease;-webkit-tap-highlight-color:transparent}
+.action-btn:active{transform:scale(.97)}
+.action-btn svg{width:19px;height:19px;stroke-width:2.7}
+.face-btn{background:#111;color:white;box-shadow:0 12px 25px rgba(0,0,0,.20)}
+.doorbell-btn{background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#111;box-shadow:0 12px 24px rgba(214,173,66,.22)}
+.visitor-btn{grid-column:1/-1;background:var(--panel-soft);color:var(--text);border:1px solid var(--line)}
+.meta{display:grid;gap:8px;position:relative;z-index:2}
+.tap-hint,.last-access{text-align:center;font-size:13px;font-weight:700;color:var(--muted)}
+.access-log{list-style:none;display:grid;gap:6px;margin-top:2px}
+.access-log li{min-height:28px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border-radius:12px;background:var(--panel-soft);color:var(--muted);font-size:12px;font-weight:700}
+.fine-print{margin-top:14px;color:rgba(255,255,255,.54);text-align:center;font-size:12px;letter-spacing:.2px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.54);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .24s ease;z-index:5;padding:24px}
+.modal.is-visible{opacity:1;pointer-events:auto}
+.modal-panel{width:min(315px,100%);border-radius:30px;background:rgba(245,245,245,.94);color:#080808;border:1px solid rgba(255,255,255,.55);box-shadow:0 30px 80px rgba(0,0,0,.42);backdrop-filter:blur(26px);padding:28px 24px 24px;text-align:center;transform:translateY(18px) scale(.96);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.modal.is-visible .modal-panel{transform:translateY(0) scale(1)}
+.scanner{width:118px;height:118px;margin:0 auto 18px;border-radius:32px;border:3px solid rgba(0,0,0,.75);position:relative;display:grid;place-items:center;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(230,230,230,.58));color:#080808}
+.scanner:before{content:"";position:absolute;left:12px;right:12px;height:2px;background:var(--gold);box-shadow:0 0 22px rgba(214,173,66,.95);animation:faceScan 1.25s ease-in-out infinite}
+.scanner svg{width:72px;height:72px;stroke-width:1.8;opacity:.78}
+.modal-title{font-size:22px;font-weight:850;margin-bottom:6px}
+.modal-copy{font-size:13px;color:#6a6a6a;font-weight:700}
+.door{width:116px;height:128px;margin:0 auto 18px;border-radius:18px;background:linear-gradient(135deg,#1d1d1d,#090909);border:2px solid rgba(214,173,66,.65);position:relative;transform-origin:left center;box-shadow:inset -12px 0 22px rgba(255,255,255,.06),0 18px 42px rgba(0,0,0,.22)}
+.door:after{content:"";position:absolute;right:18px;top:60px;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px rgba(214,173,66,.85)}
+.unlock-modal.is-visible .door{animation:doorOpen 1.2s ease forwards}
+.pin-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
+.pin-row input{min-width:0;height:48px;border:1px solid #d8d8d8;border-radius:14px;text-align:center;font-size:20px;font-weight:800;background:white}
+.pin-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.pin-actions button{height:44px;border:none;border-radius:14px;font-weight:800;cursor:pointer}
+.pin-actions button:first-child{background:#eee;color:#111}
+.pin-actions button:last-child{background:#111;color:white}
+.is-processing .halo{transform:scale(1.22);opacity:1}
+.is-processing .badge-card{transform:translateY(-18px) rotateX(12deg) scale(1.04);box-shadow:0 38px 75px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.3)}
+.is-processing .badge-card:before{animation:cardShine .95s ease forwards;opacity:1}
+.is-processing .scan-line{animation:scan .95s cubic-bezier(.4,0,.2,1) forwards;opacity:1}
+.is-approved .result-icon,.face-modal.is-approved .scanner{background:var(--green);color:white;transform:scale(1.08)}
+.is-denied .result-icon,.face-modal.is-denied .scanner{background:var(--red);color:white;transform:scale(1.08)}
+.is-approved .badge-card{background:linear-gradient(135deg,rgba(255,255,255,.22),transparent 38%),linear-gradient(145deg,#102a18 0%,#168235 58%,#062d13 100%)}
+.is-denied .badge-card{background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 38%),linear-gradient(145deg,#3c1110 0%,#b12621 58%,#2b0504 100%);animation:deniedShake .44s ease .66s}
+.is-requesting .result-icon{background:var(--blue);color:white;animation:pulse 1s ease-in-out infinite}
+.is-fading{animation:softReset .42s ease}
+@keyframes cardShine{to{transform:translateX(140%)}}
+@keyframes scan{0%{transform:translateY(-76px);opacity:0}15%{opacity:1}100%{transform:translateY(76px);opacity:0}}
+@keyframes faceScan{0%,100%{transform:translateY(-46px);opacity:.35}50%{transform:translateY(46px);opacity:1}}
+@keyframes deniedShake{0%,100%{transform:translateY(-18px) rotateX(12deg) translateX(0) scale(1.04)}25%{transform:translateY(-18px) rotateX(12deg) translateX(-8px) scale(1.04)}50%{transform:translateY(-18px) rotateX(12deg) translateX(8px) scale(1.04)}75%{transform:translateY(-18px) rotateX(12deg) translateX(-5px) scale(1.04)}}
+@keyframes softReset{0%{opacity:1;transform:scale(1)}45%{opacity:.78;transform:scale(.985)}100%{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes doorOpen{0%{transform:perspective(600px) rotateY(0)}100%{transform:perspective(600px) rotateY(-62deg)}}
+@media(max-width:430px){body{padding:12px}.device{border-radius:28px;padding:15px}.stage{min-height:550px;padding:18px}.message-text{font-size:22px}.title{font-size:17px}.actions{grid-template-columns:1fr}.visitor-btn{grid-column:auto}}
+</style>
 </head>
 
 <body>
-    <main class="app-shell">
-        <section class="device" id="accessPanel" aria-live="polite">
-            <div class="top-bar">
-                <div class="brand">
-                    <div class="logo">
-                        <img src="mason-office-logo.png" alt="Mason's Office logo">
-                    </div>
+<main class="app">
+<section class="device" id="accessPanel" aria-live="polite">
+<div class="topbar">
+<div class="brand">
+<div class="logo"><img src="mason-office-logo.png" alt="Mason's Office logo"></div>
+<div>
+<div class="title">Mason Kelley's Office</div>
+<div class="subtitle">Private access</div>
+</div>
+</div>
 
-                    <div>
-                        <div class="title">Mason Kelley's Office</div>
-                        <div class="subtitle">Private access</div>
-                    </div>
-                </div>
+<div class="icon-row">
+<button class="icon-btn" onclick="toggleSound()" aria-label="Toggle sound">
+<svg id="soundSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M11 5 6 9H3v6h3l5 4V5z"></path>
+<path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+</svg>
+</button>
 
-                <div class="lock-button" aria-hidden="true">
-                    <svg id="lockSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <rect x="5" y="10" width="14" height="10" rx="2"></rect>
-                        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-                    </svg>
-                </div>
-            </div>
+<button class="icon-btn" onpointerdown="startUnlockHold()" onpointerup="cancelUnlockHold()" onpointerleave="cancelUnlockHold()" aria-label="Hold for manual unlock">
+<svg id="lockSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<rect x="5" y="10" width="14" height="10" rx="2"></rect>
+<path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+</svg>
+</button>
 
-            <div class="wallet-stage">
-                <div class="status-row">
-                    <div>
-                        <div class="status-text" id="statusText">Ready to verify</div>
-                        <div class="message-text" id="messageText">Tap badge</div>
-                    </div>
+<button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3z"></path>
+</svg>
+</button>
+</div>
+</div>
 
-                    <div class="result-icon" aria-hidden="true">
-                        <svg id="resultSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M12 3v18"></path>
-                            <path d="M7 8h10"></path>
-                            <path d="M7 16h10"></path>
-                        </svg>
-                    </div>
-                </div>
+<div class="stage">
+<img class="stage-watermark" src="mason-office-logo.png" alt="">
 
-                <div class="badge-area">
-                    <div class="halo"></div>
+<div class="status-row">
+<div>
+<div class="status-text" id="statusText">Ready to verify</div>
+<div class="message-text" id="messageText">Tap badge</div>
+</div>
+<div class="result-icon" aria-hidden="true">
+<svg id="resultSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M12 3v18"></path>
+<path d="M7 8h10"></path>
+<path d="M7 16h10"></path>
+</svg>
+</div>
+</div>
 
-                    <button class="badge-card" id="badgeCard" onclick="randomVerify('badge')" aria-label="Tap badge to verify access">
-                        <img class="card-logo" src="mason-office-logo.png" alt="">
-                        <div class="badge-chip"></div>
+<div class="hours-pill" id="hoursPill">
+<span class="hours-dot"></span>
+<span id="hoursText">Checking office hours</span>
+</div>
 
-                        <div class="tap-rings" aria-hidden="true">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
+<div class="badge-area">
+<div class="halo"></div>
+<button class="badge-card" onclick="randomVerify('badge')" aria-label="Tap badge to verify access">
+<img class="card-logo" src="mason-office-logo.png" alt="">
+<div class="badge-chip"></div>
+<div class="tap-rings" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="badge-name">
+<strong>Mason Kelley</strong>
+<span>Office badge</span>
+</div>
+<div class="scan-line"></div>
+</button>
+</div>
 
-                        <div class="badge-name">
-                            <strong>Mason Kelley</strong>
-                            <span>Office badge</span>
-                        </div>
+<div class="actions">
+<button class="action-btn face-btn" onclick="startFaceId()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M8 3H6a3 3 0 0 0-3 3v2"></path>
+<path d="M16 3h2a3 3 0 0 1 3 3v2"></path>
+<path d="M8 21H6a3 3 0 0 1-3-3v-2"></path>
+<path d="M16 21h2a3 3 0 0 0 3-3v-2"></path>
+<path d="M9 10h.01"></path>
+<path d="M15 10h.01"></path>
+<path d="M9 15c1.2 1 4.8 1 6 0"></path>
+</svg>
+Face ID
+</button>
 
-                        <div class="scan-line"></div>
-                    </button>
-                </div>
+<button class="action-btn doorbell-btn" onclick="ringDoorbell()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M6 8a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9"></path>
+<path d="M10 21h4"></path>
+</svg>
+Doorbell
+</button>
 
-                <div class="actions">
-                    <button class="face-button" onclick="startFaceId()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M8 3H6a3 3 0 0 0-3 3v2"></path>
-                            <path d="M16 3h2a3 3 0 0 1 3 3v2"></path>
-                            <path d="M8 21H6a3 3 0 0 1-3-3v-2"></path>
-                            <path d="M16 21h2a3 3 0 0 0 3-3v-2"></path>
-                            <path d="M9 10h.01"></path>
-                            <path d="M15 10h.01"></path>
-                            <path d="M9 15c1.2 1 4.8 1 6 0"></path>
-                        </svg>
-                        Face ID
-                    </button>
-                    <div class="tap-hint">Tap the badge or use Face ID</div>
-                    <div class="last-access" id="lastAccess">No recent attempts</div>
-                </div>
-            </div>
-        </section>
+<button class="action-btn visitor-btn" onclick="visitorMode()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M20 21a8 8 0 0 0-16 0"></path>
+<circle cx="12" cy="7" r="4"></circle>
+</svg>
+Visitor request
+</button>
+</div>
 
-        <p class="fine-print">Secure office access</p>
-    </main>
+<div class="meta">
+<div class="tap-hint">Tap the badge, use Face ID, or ring for access</div>
+<div class="last-access" id="lastAccess">No recent attempts</div>
+<ul class="access-log" id="accessLog">
+<li><span>Access log</span><span>Waiting</span></li>
+</ul>
+</div>
+</div>
+</section>
 
-    <div class="face-modal" id="faceModal" aria-hidden="true">
-        <div class="face-panel">
-            <div class="face-scanner">
-                <svg id="faceSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M8 3H6a3 3 0 0 0-3 3v2"></path>
-                    <path d="M16 3h2a3 3 0 0 1 3 3v2"></path>
-                    <path d="M8 21H6a3 3 0 0 1-3-3v-2"></path>
-                    <path d="M16 21h2a3 3 0 0 0 3-3v-2"></path>
-                    <path d="M9 10h.01"></path>
-                    <path d="M15 10h.01"></path>
-                    <path d="M9 15c1.2 1 4.8 1 6 0"></path>
-                </svg>
-            </div>
-            <div class="face-title" id="faceTitle">Scanning Face</div>
-            <div class="face-copy" id="faceCopy">Hold still for verification</div>
-        </div>
-    </div>
+<p class="fine-print">Secure office access</p>
+</main>
 
-    <script>
-        const panel = document.getElementById('accessPanel');
-        const statusText = document.getElementById('statusText');
-        const messageText = document.getElementById('messageText');
-        const resultSvg = document.getElementById('resultSvg');
-        const lockSvg = document.getElementById('lockSvg');
-        const lastAccess = document.getElementById('lastAccess');
-        const faceModal = document.getElementById('faceModal');
-        const faceTitle = document.getElementById('faceTitle');
-        const faceCopy = document.getElementById('faceCopy');
-        const faceSvg = document.getElementById('faceSvg');
+<div class="modal face-modal" id="faceModal" aria-hidden="true">
+<div class="modal-panel">
+<div class="scanner">
+<svg id="faceSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor"></svg>
+</div>
+<div class="modal-title" id="faceTitle">Scanning Face</div>
+<div class="modal-copy" id="faceCopy">Hold still for verification</div>
+</div>
+</div>
 
-        let timer;
-        let isBusy = false;
-        let audioContext;
+<div class="modal unlock-modal" id="unlockModal" aria-hidden="true">
+<div class="modal-panel">
+<div class="door"></div>
+<div class="modal-title" id="unlockTitle">Manual Unlock</div>
+<div class="modal-copy" id="unlockCopy">Enter 0426 to unlock</div>
+<div class="pin-row">
+<input inputmode="numeric" maxlength="1" class="pin-input">
+<input inputmode="numeric" maxlength="1" class="pin-input">
+<input inputmode="numeric" maxlength="1" class="pin-input">
+<input inputmode="numeric" maxlength="1" class="pin-input">
+</div>
+<div class="pin-actions">
+<button onclick="closeUnlockModal()">Cancel</button>
+<button onclick="submitPin()">Unlock</button>
+</div>
+</div>
+</div>
 
-        const icons = {
-            idle: `
-                <path d="M12 3v18"></path>
-                <path d="M7 8h10"></path>
-                <path d="M7 16h10"></path>
-            `,
-            approved: '<path d="M20 6 9 17l-5-5"></path>',
-            denied: `
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-            `,
-            locked: `
-                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
-                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-            `,
-            unlocked: `
-                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
-                <path d="M8 10V7a4 4 0 0 1 7.4-2.1"></path>
-            `,
-            face: `
-                <path d="M8 3H6a3 3 0 0 0-3 3v2"></path>
-                <path d="M16 3h2a3 3 0 0 1 3 3v2"></path>
-                <path d="M8 21H6a3 3 0 0 1-3-3v-2"></path>
-                <path d="M16 21h2a3 3 0 0 0 3-3v-2"></path>
-                <path d="M9 10h.01"></path>
-                <path d="M15 10h.01"></path>
-                <path d="M9 15c1.2 1 4.8 1 6 0"></path>
-            `
-        };
+<script>
+const panel=document.getElementById('accessPanel');
+const statusText=document.getElementById('statusText');
+const messageText=document.getElementById('messageText');
+const resultSvg=document.getElementById('resultSvg');
+const lockSvg=document.getElementById('lockSvg');
+const soundSvg=document.getElementById('soundSvg');
+const lastAccess=document.getElementById('lastAccess');
+const accessLog=document.getElementById('accessLog');
+const faceModal=document.getElementById('faceModal');
+const faceTitle=document.getElementById('faceTitle');
+const faceCopy=document.getElementById('faceCopy');
+const faceSvg=document.getElementById('faceSvg');
+const unlockModal=document.getElementById('unlockModal');
+const unlockTitle=document.getElementById('unlockTitle');
+const unlockCopy=document.getElementById('unlockCopy');
+const hoursPill=document.getElementById('hoursPill');
+const hoursText=document.getElementById('hoursText');
+const pinInputs=Array.from(document.querySelectorAll('.pin-input'));
 
-        function randomVerify(method) {
-            if (isBusy) return;
-            verifyAccess(Math.random() >= 0.5, method);
-        }
+let timer;
+let holdTimer;
+let isBusy=false;
+let soundOn=true;
+let audioContext;
+let logItems=[];
 
-        function startFaceId() {
-            if (isBusy) return;
+const icons={
+idle:'<path d="M12 3v18"></path><path d="M7 8h10"></path><path d="M7 16h10"></path>',
+approved:'<path d="M20 6 9 17l-5-5"></path>',
+denied:'<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>',
+request:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9"></path><path d="M10 21h4"></path>',
+locked:'<rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>',
+unlocked:'<rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 7.4-2.1"></path>',
+sound:'<path d="M11 5 6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path>',
+muted:'<path d="M11 5 6 9H3v6h3l5 4V5z"></path><path d="M19 9l-6 6"></path><path d="m13 9 6 6"></path>',
+face:'<path d="M8 3H6a3 3 0 0 0-3 3v2"></path><path d="M16 3h2a3 3 0 0 1 3 3v2"></path><path d="M8 21H6a3 3 0 0 1-3-3v-2"></path><path d="M16 21h2a3 3 0 0 0 3-3v-2"></path><path d="M9 10h.01"></path><path d="M15 10h.01"></path><path d="M9 15c1.2 1 4.8 1 6 0"></path>'
+};
 
-            isBusy = true;
-            clearTimeout(timer);
-            faceModal.classList.remove('is-approved', 'is-denied');
-            faceModal.classList.add('is-visible');
-            faceModal.setAttribute('aria-hidden', 'false');
-            faceTitle.textContent = 'Scanning Face';
-            faceCopy.textContent = 'Hold still for verification';
-            faceSvg.innerHTML = icons.face;
-            playTone('scan');
+pinInputs.forEach((input,index)=>{
+input.addEventListener('input',()=>{
+input.value=input.value.replace(/\D/g,'');
+if(input.value&&pinInputs[index+1])pinInputs[index+1].focus();
+});
+});
 
-            setTimeout(() => {
-                const isApproved = Math.random() >= 0.5;
-                faceModal.classList.add(isApproved ? 'is-approved' : 'is-denied');
-                faceTitle.textContent = isApproved ? 'Face Verified' : 'Face Not Verified';
-                faceCopy.textContent = isApproved ? 'Access granted' : 'Access denied';
-                faceSvg.innerHTML = isApproved ? icons.approved : icons.denied;
-                verifyAccess(isApproved, 'Face ID', true);
-            }, 1450);
-        }
+updateOfficeHours();
 
-        function verifyAccess(isApproved, method, fromFaceId = false) {
-            isBusy = true;
-            clearTimeout(timer);
+function randomVerify(method){
+if(isBusy)return;
+const chance=method==='badge'?.72:.5;
+verifyAccess(Math.random()<chance,method);
+}
 
-            panel.classList.remove('is-approved', 'is-denied', 'is-fading');
-            panel.classList.add('is-processing');
+function startFaceId(){
+if(isBusy)return;
+isBusy=true;
+clearTimeout(timer);
+faceModal.classList.remove('is-approved','is-denied');
+faceModal.classList.add('is-visible');
+faceModal.setAttribute('aria-hidden','false');
+faceTitle.textContent='Scanning Face';
+faceCopy.textContent='Hold still for verification';
+faceSvg.innerHTML=icons.face;
+playTone('scan');
 
-            statusText.textContent = fromFaceId ? 'Checking Face ID' : 'Verifying badge';
-            messageText.textContent = fromFaceId ? 'Scanning face' : 'Hold near reader';
-            resultSvg.innerHTML = icons.idle;
+setTimeout(()=>{
+const isApproved=Math.random()>=.5;
+faceModal.classList.add(isApproved?'is-approved':'is-denied');
+faceTitle.textContent=isApproved?'Face Verified':'Face Not Verified';
+faceCopy.textContent=isApproved?'Access granted':'Access denied';
+faceSvg.innerHTML=isApproved?icons.approved:icons.denied;
+verifyAccess(isApproved,'Face ID',true);
+},1450);
+}
 
-            if (navigator.vibrate) {
-                navigator.vibrate(70);
-            }
+function ringDoorbell(){
+if(isBusy)return;
+isBusy=true;
+clearTimeout(timer);
+panel.classList.remove('is-approved','is-denied','is-fading');
+panel.classList.add('is-requesting');
+statusText.textContent='Doorbell ringing';
+messageText.textContent='Waiting for Mason';
+resultSvg.innerHTML=icons.request;
+playTone('doorbell');
 
-            setTimeout(() => {
-                panel.classList.remove('is-processing');
-                panel.classList.add(isApproved ? 'is-approved' : 'is-denied');
+setTimeout(()=>{
+statusText.textContent='Request sent';
+messageText.textContent='Mason notified';
+addLog('Doorbell','Notified');
+timer=setTimeout(reset,3000);
+},1600);
+}
 
-                statusText.textContent = isApproved ? 'Access granted' : 'Access denied';
-                messageText.textContent = isApproved ? 'Welcome in' : 'Not verified';
-                resultSvg.innerHTML = isApproved ? icons.approved : icons.denied;
-                lockSvg.innerHTML = isApproved ? icons.unlocked : icons.locked;
-                lastAccess.textContent = `Last attempt: ${isApproved ? 'Approved' : 'Denied'} by ${method} at ${getTime()}`;
+function visitorMode(){
+if(isBusy)return;
+isBusy=true;
+clearTimeout(timer);
+panel.classList.remove('is-approved','is-denied','is-fading');
+panel.classList.add('is-requesting');
+statusText.textContent='Visitor mode';
+messageText.textContent='Please wait';
+resultSvg.innerHTML=icons.request;
+playTone('scan');
 
-                playTone(isApproved ? 'approved' : 'denied');
+setTimeout(()=>{
+statusText.textContent='Visitor request';
+messageText.textContent='Approval pending';
+addLog('Visitor','Pending');
+timer=setTimeout(reset,3200);
+},1200);
+}
 
-                if (navigator.vibrate) {
-                    navigator.vibrate(isApproved ? 180 : [90, 50, 90, 50, 90]);
-                }
+function verifyAccess(isApproved,method,fromFaceId=false){
+isBusy=true;
+clearTimeout(timer);
+panel.classList.remove('is-approved','is-denied','is-requesting','is-fading');
+panel.classList.add('is-processing');
+statusText.textContent=fromFaceId?'Checking Face ID':'Verifying badge';
+messageText.textContent=fromFaceId?'Scanning face':'Hold near reader';
+resultSvg.innerHTML=icons.idle;
+vibrate(70);
 
-                timer = setTimeout(reset, fromFaceId ? 3600 : 3300);
-            }, fromFaceId ? 300 : 950);
-        }
+setTimeout(()=>{
+panel.classList.remove('is-processing');
+panel.classList.add(isApproved?'is-approved':'is-denied');
+statusText.textContent=isApproved?'Access granted':'Access denied';
+messageText.textContent=isApproved?'Welcome in':'Not verified';
+resultSvg.innerHTML=isApproved?icons.approved:icons.denied;
+lockSvg.innerHTML=isApproved?icons.unlocked:icons.locked;
+addLog(method,isApproved?'Approved':'Denied');
+playTone(isApproved?'approved':'denied');
+vibrate(isApproved?180:[90,50,90,50,90]);
+if(isApproved)showUnlockAnimation();
+timer=setTimeout(reset,fromFaceId?3800:3400);
+},fromFaceId?300:950);
+}
 
-        function reset() {
-            panel.classList.add('is-fading');
-            faceModal.classList.remove('is-visible', 'is-approved', 'is-denied');
-            faceModal.setAttribute('aria-hidden', 'true');
+function showUnlockAnimation(){
+unlockTitle.textContent='Door Unlocked';
+unlockCopy.textContent='Access granted';
+unlockModal.classList.add('is-visible');
+unlockModal.setAttribute('aria-hidden','false');
+setTimeout(closeUnlockModal,1450);
+}
 
-            setTimeout(() => {
-                panel.classList.remove('is-processing', 'is-approved', 'is-denied');
-                statusText.textContent = 'Ready to verify';
-                messageText.textContent = 'Tap badge';
-                resultSvg.innerHTML = icons.idle;
-                lockSvg.innerHTML = icons.locked;
-                isBusy = false;
-            }, 220);
-        }
+function startUnlockHold(){
+holdTimer=setTimeout(openManualUnlock,900);
+}
 
-        function getTime() {
-            return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        }
+function cancelUnlockHold(){
+clearTimeout(holdTimer);
+}
 
-        function playTone(type) {
-            try {
-                audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
-                const now = audioContext.currentTime;
+function openManualUnlock(){
+if(isBusy)return;
+unlockTitle.textContent='Manual Unlock';
+unlockCopy.textContent='Enter 0426 to unlock';
+unlockModal.classList.add('is-visible');
+unlockModal.setAttribute('aria-hidden','false');
+pinInputs.forEach(input=>input.value='');
+setTimeout(()=>pinInputs[0].focus(),150);
+}
 
-                if (type === 'approved') {
-                    tone(660, now, 0.11, 0.045);
-                    tone(880, now + 0.11, 0.13, 0.05);
-                } else if (type === 'denied') {
-                    tone(220, now, 0.12, 0.05);
-                    tone(160, now + 0.11, 0.16, 0.045);
-                } else {
-                    tone(440, now, 0.08, 0.025);
-                    tone(520, now + 0.1, 0.08, 0.025);
-                }
-            } catch (error) {
-                return;
-            }
-        }
+function closeUnlockModal(){
+unlockModal.classList.remove('is-visible');
+unlockModal.setAttribute('aria-hidden','true');
+}
 
-        function tone(frequency, start, duration, volume) {
-            const oscillator = audioContext.createOscillator();
-            const gain = audioContext.createGain();
+function submitPin(){
+const pin=pinInputs.map(input=>input.value).join('');
+if(pin==='0426'){
+closeUnlockModal();
+verifyAccess(true,'Manual');
+}else{
+unlockCopy.textContent='Wrong code. Try 0426.';
+playTone('denied');
+vibrate([80,50,80]);
+}
+}
 
-            oscillator.type = 'sine';
-            oscillator.frequency.value = frequency;
-            gain.gain.setValueAtTime(0.001, start);
-            gain.gain.exponentialRampToValueAtTime(volume, start + 0.015);
-            gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+function reset(){
+panel.classList.add('is-fading');
+faceModal.classList.remove('is-visible','is-approved','is-denied');
+faceModal.setAttribute('aria-hidden','true');
 
-            oscillator.connect(gain);
-            gain.connect(audioContext.destination);
-            oscillator.start(start);
-            oscillator.stop(start + duration + 0.02);
-        }
-    </script>
+setTimeout(()=>{
+panel.classList.remove('is-processing','is-approved','is-denied','is-requesting');
+statusText.textContent='Ready to verify';
+messageText.textContent='Tap badge';
+resultSvg.innerHTML=icons.idle;
+lockSvg.innerHTML=icons.locked;
+isBusy=false;
+},220);
+}
+
+function addLog(method,result){
+const time=getTime();
+lastAccess.textContent=`Last attempt: ${result} by ${method} at ${time}`;
+logItems.unshift({method,result,time});
+logItems=logItems.slice(0,3);
+accessLog.innerHTML=logItems.map(item=>`
+<li>
+<span>${item.method}</span>
+<span>${item.result} · ${item.time}</span>
+</li>
+`).join('');
+}
+
+function updateOfficeHours(){
+const hour=new Date().getHours();
+const isOpen=hour>=8&&hour<18;
+hoursPill.classList.toggle('closed',!isOpen);
+hoursText.textContent=isOpen?'Office open · 8 AM-6 PM':'After hours · requests still available';
+}
+
+function toggleSound(){
+soundOn=!soundOn;
+soundSvg.innerHTML=soundOn?icons.sound:icons.muted;
+if(soundOn)playTone('scan');
+}
+
+function toggleTheme(){
+document.body.classList.toggle('light');
+}
+
+function getTime(){
+return new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+}
+
+function vibrate(pattern){
+if(navigator.vibrate)navigator.vibrate(pattern);
+}
+
+function playTone(type){
+if(!soundOn)return;
+
+try{
+audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+const now=audioContext.currentTime;
+
+if(type==='approved'){
+tone(660,now,.11,.045);
+tone(880,now+.11,.13,.05);
+}else if(type==='denied'){
+tone(220,now,.12,.05);
+tone(160,now+.11,.16,.045);
+}else if(type==='doorbell'){
+tone(523,now,.13,.045);
+tone(659,now+.16,.13,.045);
+tone(784,now+.32,.18,.04);
+}else{
+tone(440,now,.08,.025);
+tone(520,now+.1,.08,.025);
+}
+}catch(error){
+return;
+}
+}
+
+function tone(frequency,start,duration,volume){
+const oscillator=audioContext.createOscillator();
+const gain=audioContext.createGain();
+oscillator.type='sine';
+oscillator.frequency.value=frequency;
+gain.gain.setValueAtTime(.001,start);
+gain.gain.exponentialRampToValueAtTime(volume,start+.015);
+gain.gain.exponentialRampToValueAtTime(.001,start+duration);
+oscillator.connect(gain);
+gain.connect(audioContext.destination);
+oscillator.start(start);
+oscillator.stop(start+duration+.02);
+}
+</script>
 </body>
 </html>
