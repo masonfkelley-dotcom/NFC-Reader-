@@ -18,7 +18,7 @@
         .container {
             background: white;
             border-radius: 20px;
-            padding: 60px 40px;
+            padding: 40px 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
             max-width: 500px;
@@ -27,22 +27,19 @@
         .nfc-icon {
             font-size: 80px;
             margin-bottom: 30px;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
         }
         .status-text {
             font-size: 32px;
             font-weight: bold;
             color: #333;
             margin-bottom: 20px;
+            min-height: 40px;
         }
         .message-text {
             font-size: 24px;
             color: #666;
             margin-bottom: 40px;
+            min-height: 30px;
         }
         .button-group {
             display: flex;
@@ -63,22 +60,87 @@
             background: #4CAF50;
             color: white;
         }
-        .authorized-btn:hover {
+        .authorized-btn:active {
             background: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
         }
         .unauthorized-btn {
             background: #F44336;
             color: white;
         }
-        .unauthorized-btn:hover {
+        .unauthorized-btn:active {
             background: #da190b;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
         }
         .reset-btn {
             background: #2196F3;
             color: white;
-            width*
-
+            width: 100%;
+        }
+        .reset-btn:active {
+            background: #0b7dda;
+        }
+        .info-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nfc-icon">📱</div>
+        <div class="status-text" id="statusText">Tap your card here</div>
+        <div class="message-text" id="messageText"></div>
+
+        <div class="button-group">
+            <button class="authorized-btn" onclick="authorizedCard()">✓ Authorized</button>
+            <button class="unauthorized-btn" onclick="unauthorizedCard()">✗ Unauthorized</button>
+        </div>
+        <button class="reset-btn" onclick="reset()">Reset</button>
+
+        <div class="info-box">
+            <strong>Web Mock Version</strong><br>
+            Click buttons to simulate NFC detection
+        </div>
+    </div>
+
+    <script>
+        let timer;
+
+        function authorizedCard() {
+            document.getElementById('statusText').innerHTML = '<span style="color: #4CAF50;">Badge Verified</span>';
+            document.getElementById('messageText').innerHTML = '<span style="color: #4CAF50;">Welcome!</span>';
+            document.body.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+            
+            clearTimeout(timer);
+            timer = setTimeout(reset, 3000);
+        }
+
+        function unauthorizedCard() {
+            document.getElementById('statusText').innerHTML = '<span style="color: #F44336;">Badge Unverified</span>';
+            document.getElementById('messageText').innerHTML = '<span style="color: #F44336;">Access Denied</span>';
+            document.body.style.background = 'linear-gradient(135deg, #F44336 0%, #da190b 100%)';
+            
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100, 50, 100]);
+            }
+            
+            clearTimeout(timer);
+            timer = setTimeout(reset, 3000);
+        }
+
+        function reset() {
+            document.getElementById('statusText').textContent = 'Tap your card here';
+            document.getElementById('messageText').textContent = '';
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+    </script>
+</body>
+</html>
