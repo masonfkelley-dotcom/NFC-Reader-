@@ -6,222 +6,544 @@
     <title>Mason Kelley's Office</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
+        :root {
+            --black: #070707;
+            --ink: #111111;
+            --muted: #757575;
+            --gold: #d6ad42;
+            --gold-dark: #9f7623;
+            --green: #35c759;
+            --red: #ff3b30;
+            --panel: rgba(255, 255, 255, 0.86);
+        }
+
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #000000;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background:
+                radial-gradient(circle at 50% 16%, rgba(214, 173, 66, 0.24), transparent 34%),
+                linear-gradient(145deg, #181818 0%, #050505 50%, #101010 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 22px;
+            color: var(--ink);
+            overflow: hidden;
         }
-        
-        .container {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 60px 40px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
+            pointer-events: none;
         }
-        
+
+        .app-shell {
+            width: min(430px, 100%);
+            position: relative;
+            z-index: 1;
+        }
+
+        .device {
+            background: var(--panel);
+            border: 1px solid rgba(255,255,255,0.45);
+            border-radius: 34px;
+            padding: 22px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.75);
+            backdrop-filter: blur(24px);
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .logo {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 40px;
-            background: linear-gradient(135deg, #d4af37 0%, #b8941e 100%);
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #f3d27a 0%, var(--gold) 47%, var(--gold-dark) 100%);
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #090909;
+            box-shadow: 0 10px 24px rgba(159,118,35,0.32);
+        }
+
+        .title {
+            font-size: 19px;
+            line-height: 1.1;
+            font-weight: 750;
+            color: var(--black);
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+            letter-spacing: 0.4px;
+        }
+
+        .signal {
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #111111;
+            color: white;
+        }
+
+        .signal svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .wallet-stage {
+            min-height: 380px;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.85), rgba(248,248,248,0.78)),
+                radial-gradient(circle at center, rgba(214,173,66,0.18), transparent 54%);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 28px;
+            padding: 24px;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 650;
+        }
+
+        .message-text {
+            margin-top: 4px;
+            font-size: 25px;
+            line-height: 1.05;
+            font-weight: 800;
+            color: var(--black);
+        }
+
+        .result-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #efefef;
+            color: var(--black);
+            transition: background 0.24s ease, color 0.24s ease, transform 0.24s ease;
+        }
+
+        .result-icon svg {
+            width: 25px;
+            height: 25px;
+            stroke-width: 3;
+        }
+
+        .badge-area {
+            position: relative;
+            display: grid;
+            place-items: center;
+            perspective: 900px;
+        }
+
+        .halo {
+            position: absolute;
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(214,173,66,0.22), transparent 65%);
+            transform: scale(0.8);
+            opacity: 0.8;
+            transition: transform 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.35s ease;
+        }
+
+        .badge-card {
+            width: min(290px, 92%);
+            aspect-ratio: 1.62;
+            border-radius: 24px;
+            padding: 22px;
+            color: white;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.22), transparent 38%),
+                linear-gradient(145deg, #151515 0%, #222222 55%, #050505 100%);
+            box-shadow: 0 26px 50px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.22);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.56s cubic-bezier(.2,.8,.2,1), box-shadow 0.56s ease, background 0.28s ease;
+        }
+
+        .badge-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 28%, rgba(255,255,255,0.28) 45%, transparent 62%);
+            transform: translateX(-140%);
+            opacity: 0;
+        }
+
+        .badge-card::after {
+            content: "";
+            position: absolute;
+            inset: auto 18px 18px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .badge-chip {
+            width: 42px;
+            height: 32px;
+            border-radius: 9px;
+            background:
+                linear-gradient(90deg, transparent 32%, rgba(0,0,0,0.14) 32%, rgba(0,0,0,0.14) 36%, transparent 36%),
+                linear-gradient(#f5d77b, #bd8f26);
+        }
+
+        .badge-name {
+            position: absolute;
+            left: 22px;
+            bottom: 30px;
+            z-index: 2;
+        }
+
+        .badge-name strong {
+            display: block;
+            font-size: 18px;
+        }
+
+        .badge-name span {
+            display: block;
+            margin-top: 5px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.62);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .tap-rings {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 38px;
+            height: 38px;
+            opacity: 0.82;
+        }
+
+        .tap-rings span {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(255,255,255,0.58);
+            border-left-color: transparent;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            transform: rotate(45deg) scale(var(--s));
+        }
+
+        .tap-rings span:nth-child(1) { --s: 0.45; }
+        .tap-rings span:nth-child(2) { --s: 0.72; }
+        .tap-rings span:nth-child(3) { --s: 1; }
+
+        .scan-line {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            top: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.96), transparent);
+            box-shadow: 0 0 24px rgba(255,255,255,0.9);
+            opacity: 0;
+            transform: translateY(-76px);
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        button {
+            min-height: 58px;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: transform 0.22s ease;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
-            font-weight: 700;
-            color: #000000;
-            letter-spacing: 2px;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            gap: 9px;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        .title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #000000;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
+
+        button svg {
+            width: 19px;
+            height: 19px;
+            stroke-width: 3;
         }
-        
-        .subtitle {
-            font-size: 14px;
-            color: #888888;
-            margin-bottom: 50px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+
+        button:active {
+            transform: scale(0.97);
         }
-        
-        .status-text {
-            font-size: 18px;
-            color: #666666;
-            margin-bottom: 30px;
-            min-height: 25px;
-            letter-spacing: 0.5px;
-        }
-        
-        .message-text {
-            font-size: 36px;
-            font-weight: 700;
-            color: #000000;
-            margin-bottom: 40px;
-            min-height: 45px;
-            letter-spacing: 1px;
-        }
-        
-        .button-container {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        button {
-            flex: 1;
-            padding: 18px 30px;
-            font-size: 15px;
-            font-weight: 700;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
+
         .authorized-btn {
-            background: #000000;
-            color: #ffffff;
+            background: #111111;
+            color: white;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.18);
         }
-        
-        .authorized-btn:active {
-            background: #1a1a1a;
-            transform: scale(0.98);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        
+
         .unauthorized-btn {
-            background: #d4af37;
-            color: #000000;
+            background: #f0f0f0;
+            color: #111111;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
         }
-        
-        .unauthorized-btn:active {
-            background: #b8941e;
-            transform: scale(0.98);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+        .fine-print {
+            margin-top: 16px;
+            color: rgba(255,255,255,0.54);
+            text-align: center;
+            font-size: 12px;
         }
-        
-        .success-state {
-            animation: slideIn 0.4s ease;
+
+        .is-processing .halo {
+            transform: scale(1.2);
+            opacity: 1;
         }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+
+        .is-processing .badge-card {
+            transform: translateY(-18px) rotateX(12deg) scale(1.04);
+            box-shadow: 0 38px 75px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.3);
         }
-        
-        .divider {
-            width: 60px;
-            height: 2px;
-            background: #e0e0e0;
-            margin: 30px auto;
+
+        .is-processing .badge-card::before {
+            animation: cardShine 0.95s ease forwards;
+            opacity: 1;
+        }
+
+        .is-processing .scan-line {
+            animation: scan 0.95s cubic-bezier(.4,0,.2,1) forwards;
+            opacity: 1;
+        }
+
+        .is-approved .result-icon {
+            background: var(--green);
+            color: white;
+            transform: scale(1.08);
+        }
+
+        .is-denied .result-icon {
+            background: var(--red);
+            color: white;
+            transform: scale(1.08);
+        }
+
+        .is-approved .badge-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.22), transparent 38%),
+                linear-gradient(145deg, #102a18 0%, #168235 58%, #062d13 100%);
+        }
+
+        .is-denied .badge-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.18), transparent 38%),
+                linear-gradient(145deg, #3c1110 0%, #b12621 58%, #2b0504 100%);
+            animation: deniedShake 0.44s ease 0.66s;
+        }
+
+        @keyframes cardShine {
+            to { transform: translateX(140%); }
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-76px); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: translateY(76px); opacity: 0; }
+        }
+
+        @keyframes deniedShake {
+            0%, 100% { transform: translateY(-18px) rotateX(12deg) translateX(0) scale(1.04); }
+            25% { transform: translateY(-18px) rotateX(12deg) translateX(-8px) scale(1.04); }
+            50% { transform: translateY(-18px) rotateX(12deg) translateX(8px) scale(1.04); }
+            75% { transform: translateY(-18px) rotateX(12deg) translateX(-5px) scale(1.04); }
+        }
+
+        @media (max-width: 430px) {
+            body { padding: 14px; }
+            .device { border-radius: 28px; padding: 16px; }
+            .wallet-stage { min-height: 360px; padding: 20px; }
+            .message-text { font-size: 22px; }
+            .button-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Logo -->
-        <div class="logo">MK</div>
-        
-        <!-- Title -->
-        <div class="title">Mason Kelley's Office</div>
-        <div class="subtitle">Access Control</div>
-        
-        <div class="divider"></div>
-        
-        <!-- Status -->
-        <div class="status-text" id="statusText">Tap your badge</div>
-        <div class="message-text" id="messageText">—</div>
-        
-        <!-- Buttons -->
-        <div class="button-container">
-            <button class="authorized-btn" onclick="handleAuthorized()">✓ ENTER</button>
-            <button class="unauthorized-btn" onclick="handleUnauthorized()">✗ DENY</button>
-        </div>
-    </div>
+    <main class="app-shell">
+        <section class="device" id="accessPanel" aria-live="polite">
+            <div class="top-bar">
+                <div class="brand">
+                    <div class="logo">MK</div>
+                    <div>
+                        <div class="title">Mason Kelley's Office</div>
+                        <div class="subtitle">Private access</div>
+                    </div>
+                </div>
+
+                <div class="signal" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M6.5 12.5a7.8 7.8 0 0 1 11 0"></path>
+                        <path d="M9 15a4.2 4.2 0 0 1 6 0"></path>
+                        <path d="M12 18h.01"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="wallet-stage">
+                <div class="status-row">
+                    <div>
+                        <div class="status-text" id="statusText">Ready to verify</div>
+                        <div class="message-text" id="messageText">Tap badge</div>
+                    </div>
+
+                    <div class="result-icon" aria-hidden="true">
+                        <svg id="resultSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 3v18"></path>
+                            <path d="M7 8h10"></path>
+                            <path d="M7 16h10"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="badge-area">
+                    <div class="halo"></div>
+
+                    <div class="badge-card">
+                        <div class="badge-chip"></div>
+
+                        <div class="tap-rings" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+                        <div class="badge-name">
+                            <strong>Mason Kelley</strong>
+                            <span>Office badge</span>
+                        </div>
+
+                        <div class="scan-line"></div>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button class="authorized-btn" onclick="verifyBadge(true)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                        Verify
+                    </button>
+
+                    <button class="unauthorized-btn" onclick="verifyBadge(false)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M18 6 6 18"></path>
+                            <path d="m6 6 12 12"></path>
+                        </svg>
+                        Deny
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <p class="fine-print">Secure office access</p>
+    </main>
 
     <script>
+        const panel = document.getElementById('accessPanel');
+        const statusText = document.getElementById('statusText');
+        const messageText = document.getElementById('messageText');
+        const resultSvg = document.getElementById('resultSvg');
         let timer;
-        let clickCount = 0;
-        let lastClickTime = 0;
 
-        function handleAuthorized() {
-            clickCount++;
-            const now = Date.now();
-            
-            // Reset counter if more than 500ms has passed
-            if (now - lastClickTime > 500) {
-                clickCount = 1;
-            }
-            lastClickTime = now;
-            
-            // Show authorized state
-            document.getElementById('statusText').textContent = 'Access Granted';
-            document.getElementById('messageText').innerHTML = '✓ WELCOME';
-            document.querySelector('.message-text').style.color = '#000000';
-            document.querySelector('.message-text').classList.add('success-state');
-            
-            // Vibrate
-            if (navigator.vibrate) {
-                navigator.vibrate(200);
-            }
-            
-            // Clear any existing timer
-            clearTimeout(timer);
-            
-            // Reset after 3 seconds OR if clicked twice fast
-            if (clickCount >= 2) {
-                timer = setTimeout(reset, 1500);
-            } else {
-                timer = setTimeout(reset, 3000);
-            }
-        }
+        const icons = {
+            idle: `
+                <path d="M12 3v18"></path>
+                <path d="M7 8h10"></path>
+                <path d="M7 16h10"></path>
+            `,
+            approved: '<path d="M20 6 9 17l-5-5"></path>',
+            denied: `
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+            `
+        };
 
-        function handleUnauthorized() {
-            document.getElementById('statusText').textContent = 'Access Denied';
-            document.getElementById('messageText').innerHTML = '✗ DENIED';
-            document.querySelector('.message-text').style.color = '#d4af37';
-            document.querySelector('.message-text').classList.add('success-state');
-            
-            // Vibration pattern for denied
-            if (navigator.vibrate) {
-                navigator.vibrate([100, 50, 100, 50, 100]);
-            }
-            
+        function verifyBadge(isApproved) {
             clearTimeout(timer);
-            timer = setTimeout(reset, 3000);
+
+            panel.classList.remove('is-approved', 'is-denied');
+            panel.classList.add('is-processing');
+
+            statusText.textContent = 'Verifying badge';
+            messageText.textContent = 'Hold near reader';
+            resultSvg.innerHTML = icons.idle;
+
+            if (navigator.vibrate) {
+                navigator.vibrate(70);
+            }
+
+            setTimeout(() => {
+                panel.classList.remove('is-processing');
+                panel.classList.add(isApproved ? 'is-approved' : 'is-denied');
+
+                statusText.textContent = isApproved ? 'Access granted' : 'Access denied';
+                messageText.textContent = isApproved ? 'Welcome in' : 'Not verified';
+                resultSvg.innerHTML = isApproved ? icons.approved : icons.denied;
+
+                if (navigator.vibrate) {
+                    navigator.vibrate(isApproved ? 180 : [90, 50, 90, 50, 90]);
+                }
+
+                timer = setTimeout(reset, 3200);
+            }, 950);
         }
 
         function reset() {
-            document.getElementById('statusText').textContent = 'Tap your badge';
-            document.getElementById('messageText').innerHTML = '—';
-            document.querySelector('.message-text').style.color = '#000000';
-            document.querySelector('.message-text').classList.remove('success-state');
-            clickCount = 0;
-            lastClickTime = 0;
+            panel.classList.remove('is-processing', 'is-approved', 'is-denied');
+            statusText.textContent = 'Ready to verify';
+            messageText.textContent = 'Tap badge';
+            resultSvg.innerHTML = icons.idle;
         }
     </script>
 </body>
