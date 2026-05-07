@@ -6,8 +6,8 @@
 <title>Mason Kelley's Office</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#050505;--panel:rgba(17,17,17,.86);--panel-soft:rgba(255,255,255,.08);--text:#f7f1e6;--muted:rgba(247,241,230,.62);--line:rgba(255,255,255,.12);--gold:#d6ad42;--gold-soft:#f2d78a;--green:#35c759;--red:#ff3b30;--blue:#0a84ff}
-body.light{--bg:#111;--panel:rgba(255,255,255,.88);--panel-soft:rgba(0,0,0,.06);--text:#070707;--muted:rgba(0,0,0,.55);--line:rgba(0,0,0,.10)}
+:root{--bg:#050505;--panel:rgba(17,17,17,.86);--soft:rgba(255,255,255,.08);--text:#f7f1e6;--muted:rgba(247,241,230,.62);--line:rgba(255,255,255,.12);--gold:#d6ad42;--gold2:#f2d78a;--green:#35c759;--red:#ff3b30;--blue:#0a84ff}
+body.light{--bg:#111;--panel:rgba(255,255,255,.88);--soft:rgba(0,0,0,.06);--text:#070707;--muted:rgba(0,0,0,.55);--line:rgba(0,0,0,.10)}
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;color:var(--text);background:radial-gradient(circle at 50% 8%,rgba(214,173,66,.28),transparent 36%),linear-gradient(145deg,#1a1712 0%,var(--bg) 52%,#101010 100%);overflow:hidden}
 body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 78%);pointer-events:none}
 .app{width:min(440px,100%);position:relative;z-index:1}
@@ -20,19 +20,24 @@ body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(r
 .title{font-size:19px;line-height:1.08;font-weight:800;color:var(--text)}
 .subtitle{font-size:12px;color:var(--muted);margin-top:4px;font-weight:650}
 .icon-row{display:flex;gap:8px;flex:0 0 auto}
-.icon-btn{width:42px;height:42px;border:none;border-radius:50%;background:var(--panel-soft);color:var(--text);display:grid;place-items:center;cursor:pointer;transition:transform .2s ease,background .2s ease;-webkit-tap-highlight-color:transparent}
+.icon-btn{width:42px;height:42px;border:none;border-radius:50%;background:var(--soft);color:var(--text);display:grid;place-items:center;cursor:pointer;transition:transform .2s ease,background .2s ease;-webkit-tap-highlight-color:transparent}
 .icon-btn:active{transform:scale(.94)}
 .icon-btn svg{width:21px;height:21px;stroke-width:2.5}
-.stage{min-height:560px;border-radius:28px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04)),radial-gradient(circle at center,rgba(214,173,66,.16),transparent 58%);border:1px solid var(--line);display:grid;grid-template-rows:auto auto 1fr auto auto;gap:16px;position:relative;overflow:hidden}
-.stage-watermark{position:absolute;right:-34px;top:110px;width:240px;height:240px;object-fit:cover;border-radius:28px;opacity:.055;filter:saturate(1.2) contrast(1.25);pointer-events:none}
+.stage{min-height:610px;border-radius:28px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04)),radial-gradient(circle at center,rgba(214,173,66,.16),transparent 58%);border:1px solid var(--line);display:grid;grid-template-rows:auto auto auto 1fr auto auto;gap:14px;position:relative;overflow:hidden}
+.stage-watermark{position:absolute;right:-34px;top:130px;width:240px;height:240px;object-fit:cover;border-radius:28px;opacity:.055;filter:saturate(1.2) contrast(1.25);pointer-events:none}
 .status-row{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:2}
 .status-text{font-size:13px;color:var(--muted);font-weight:700}
 .message-text{margin-top:4px;font-size:25px;line-height:1.05;font-weight:850;color:var(--text)}
-.result-icon{width:46px;height:46px;border-radius:50%;background:var(--panel-soft);color:var(--text);display:grid;place-items:center;transition:background .24s ease,color .24s ease,transform .24s ease;flex:0 0 auto}
+.result-icon{width:46px;height:46px;border-radius:50%;background:var(--soft);color:var(--text);display:grid;place-items:center;transition:background .24s ease,color .24s ease,transform .24s ease;flex:0 0 auto}
 .result-icon svg{width:25px;height:25px;stroke-width:3}
-.hours-pill{width:fit-content;max-width:100%;display:flex;align-items:center;gap:8px;border-radius:999px;padding:8px 11px;background:var(--panel-soft);color:var(--muted);font-size:12px;font-weight:750;position:relative;z-index:2}
+.hours-pill{width:fit-content;max-width:100%;display:flex;align-items:center;gap:8px;border-radius:999px;padding:8px 11px;background:var(--soft);color:var(--muted);font-size:12px;font-weight:750;position:relative;z-index:2}
 .hours-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(53,199,89,.8)}
 .hours-pill.closed .hours-dot{background:var(--gold);box-shadow:0 0 14px rgba(214,173,66,.8)}
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:2}
+.mode-btn{min-height:44px;border:none;border-radius:15px;background:var(--soft);color:var(--text);border:1px solid var(--line);font-size:12px;font-weight:850;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;-webkit-tap-highlight-color:transparent}
+.mode-btn svg{width:17px;height:17px;stroke-width:2.7}
+.mode-btn.active.lockdown{background:var(--red);color:white;border-color:rgba(255,255,255,.25)}
+.mode-btn.active.out{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#111;border-color:rgba(255,255,255,.25)}
 .badge-area{position:relative;display:grid;place-items:center;perspective:900px;z-index:2}
 .halo{position:absolute;width:228px;height:228px;border-radius:50%;background:radial-gradient(circle,rgba(214,173,66,.28),transparent 66%);transform:scale(.82);opacity:.82;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .35s ease}
 .badge-card{width:min(310px,96%);aspect-ratio:1.62;border:none;border-radius:24px;padding:22px;color:white;background:linear-gradient(135deg,rgba(255,255,255,.24),transparent 38%),linear-gradient(145deg,#151515 0%,#242424 55%,#050505 100%);box-shadow:0 28px 54px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.22);position:relative;overflow:hidden;cursor:pointer;transform:translateY(0) rotateX(0) rotateY(0) scale(1);transition:transform .56s cubic-bezier(.2,.8,.2,1),box-shadow .56s ease,background .28s ease;-webkit-tap-highlight-color:transparent}
@@ -54,12 +59,12 @@ body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(r
 .action-btn:active{transform:scale(.97)}
 .action-btn svg{width:19px;height:19px;stroke-width:2.7}
 .face-btn{background:#111;color:white;box-shadow:0 12px 25px rgba(0,0,0,.20)}
-.doorbell-btn{background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#111;box-shadow:0 12px 24px rgba(214,173,66,.22)}
-.visitor-btn{grid-column:1/-1;background:var(--panel-soft);color:var(--text);border:1px solid var(--line)}
+.doorbell-btn{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#111;box-shadow:0 12px 24px rgba(214,173,66,.22)}
+.visitor-btn{grid-column:1/-1;background:var(--soft);color:var(--text);border:1px solid var(--line)}
 .meta{display:grid;gap:8px;position:relative;z-index:2}
 .tap-hint,.last-access{text-align:center;font-size:13px;font-weight:700;color:var(--muted)}
 .access-log{list-style:none;display:grid;gap:6px;margin-top:2px}
-.access-log li{min-height:28px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border-radius:12px;background:var(--panel-soft);color:var(--muted);font-size:12px;font-weight:700}
+.access-log li{min-height:28px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border-radius:12px;background:var(--soft);color:var(--muted);font-size:12px;font-weight:700}
 .fine-print{margin-top:14px;color:rgba(255,255,255,.54);text-align:center;font-size:12px;letter-spacing:.2px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.54);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .24s ease;z-index:5;padding:24px}
 .modal.is-visible{opacity:1;pointer-events:auto}
@@ -88,6 +93,7 @@ body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(r
 .is-approved .badge-card{background:linear-gradient(135deg,rgba(255,255,255,.22),transparent 38%),linear-gradient(145deg,#102a18 0%,#168235 58%,#062d13 100%)}
 .is-denied .badge-card{background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 38%),linear-gradient(145deg,#3c1110 0%,#b12621 58%,#2b0504 100%);animation:deniedShake .44s ease .66s}
 .is-requesting .result-icon{background:var(--blue);color:white;animation:pulse 1s ease-in-out infinite}
+.is-lockdown .result-icon{background:var(--red);color:white;animation:pulse 1s ease-in-out infinite}
 .is-fading{animation:softReset .42s ease}
 @keyframes cardShine{to{transform:translateX(140%)}}
 @keyframes scan{0%{transform:translateY(-76px);opacity:0}15%{opacity:1}100%{transform:translateY(76px);opacity:0}}
@@ -96,7 +102,7 @@ body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(r
 @keyframes softReset{0%{opacity:1;transform:scale(1)}45%{opacity:.78;transform:scale(.985)}100%{opacity:1;transform:scale(1)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 @keyframes doorOpen{0%{transform:perspective(600px) rotateY(0)}100%{transform:perspective(600px) rotateY(-62deg)}}
-@media(max-width:430px){body{padding:12px}.device{border-radius:28px;padding:15px}.stage{min-height:550px;padding:18px}.message-text{font-size:22px}.title{font-size:17px}.actions{grid-template-columns:1fr}.visitor-btn{grid-column:auto}}
+@media(max-width:430px){body{padding:12px}.device{border-radius:28px;padding:15px}.stage{min-height:610px;padding:18px}.message-text{font-size:22px}.title{font-size:17px}.actions,.mode-row{grid-template-columns:1fr}.visitor-btn{grid-column:auto}}
 </style>
 </head>
 
@@ -157,6 +163,26 @@ body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(r
 <span id="hoursText">Checking office hours</span>
 </div>
 
+<div class="mode-row">
+<button class="mode-btn lockdown" id="lockdownBtn" onclick="toggleLockdown()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M10.3 4.3 2.7 19a2 2 0 0 0 1.8 3h15a2 2 0 0 0 1.8-3L13.7 4.3a2 2 0 0 0-3.4 0z"></path>
+<path d="M12 9v4"></path>
+<path d="M12 17h.01"></path>
+</svg>
+Lockdown
+</button>
+
+<button class="mode-btn out" id="outBtn" onclick="toggleOutOfOffice()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+<path d="M9 18V5l12-2v13"></path>
+<path d="M9 9H4a2 2 0 0 0-2 2v7"></path>
+<path d="M2 18h19"></path>
+</svg>
+Out of office
+</button>
+</div>
+
 <div class="badge-area">
 <div class="halo"></div>
 <button class="badge-card" onclick="randomVerify('badge')" aria-label="Tap badge to verify access">
@@ -203,7 +229,7 @@ Visitor request
 </div>
 
 <div class="meta">
-<div class="tap-hint">Tap the badge, use Face ID, or ring for access</div>
+<div class="tap-hint" id="modeHint">Tap the badge, use Face ID, or ring for access</div>
 <div class="last-access" id="lastAccess">No recent attempts</div>
 <ul class="access-log" id="accessLog">
 <li><span>Access log</span><span>Waiting</span></li>
@@ -261,6 +287,9 @@ const unlockTitle=document.getElementById('unlockTitle');
 const unlockCopy=document.getElementById('unlockCopy');
 const hoursPill=document.getElementById('hoursPill');
 const hoursText=document.getElementById('hoursText');
+const modeHint=document.getElementById('modeHint');
+const lockdownBtn=document.getElementById('lockdownBtn');
+const outBtn=document.getElementById('outBtn');
 const pinInputs=Array.from(document.querySelectorAll('.pin-input'));
 
 let timer;
@@ -269,6 +298,7 @@ let isBusy=false;
 let soundOn=true;
 let audioContext;
 let logItems=[];
+let systemMode='normal';
 
 const icons={
 idle:'<path d="M12 3v18"></path><path d="M7 8h10"></path><path d="M7 16h10"></path>',
@@ -290,15 +320,93 @@ if(input.value&&pinInputs[index+1])pinInputs[index+1].focus();
 });
 
 updateOfficeHours();
+updateModeUI();
+
+function toggleLockdown(){
+systemMode=systemMode==='lockdown'?'normal':'lockdown';
+if(systemMode==='lockdown')clearTimeout(timer);
+updateModeUI();
+playTone(systemMode==='lockdown'?'denied':'scan');
+}
+
+function toggleOutOfOffice(){
+systemMode=systemMode==='out'?'normal':'out';
+updateModeUI();
+playTone(systemMode==='out'?'doorbell':'scan');
+}
+
+function updateModeUI(){
+lockdownBtn.classList.toggle('active',systemMode==='lockdown');
+outBtn.classList.toggle('active',systemMode==='out');
+panel.classList.toggle('is-lockdown',systemMode==='lockdown');
+
+if(systemMode==='lockdown'){
+statusText.textContent='Lockdown active';
+messageText.textContent='Access closed';
+modeHint.textContent='All access options are shut down';
+resultSvg.innerHTML=icons.denied;
+lockSvg.innerHTML=icons.locked;
+}else if(systemMode==='out'){
+statusText.textContent='Out of office';
+messageText.textContent='Visitors denied';
+modeHint.textContent='Doorbell and visitor requests will be denied';
+resultSvg.innerHTML=icons.request;
+lockSvg.innerHTML=icons.locked;
+}else{
+statusText.textContent='Ready to verify';
+messageText.textContent='Tap badge';
+modeHint.textContent='Tap the badge, use Face ID, or ring for access';
+resultSvg.innerHTML=icons.idle;
+lockSvg.innerHTML=icons.locked;
+}
+}
+
+function lockdownReject(method){
+isBusy=true;
+clearTimeout(timer);
+panel.classList.remove('is-approved','is-requesting','is-fading');
+panel.classList.add('is-denied');
+statusText.textContent='Lockdown active';
+messageText.textContent='Access closed';
+resultSvg.innerHTML=icons.denied;
+lockSvg.innerHTML=icons.locked;
+addLog(method,'Blocked');
+playTone('denied');
+vibrate([90,50,90,50,90]);
+timer=setTimeout(()=>{
+isBusy=false;
+updateModeUI();
+},2400);
+}
+
+function outReject(method){
+isBusy=true;
+clearTimeout(timer);
+panel.classList.remove('is-approved','is-requesting','is-fading');
+panel.classList.add('is-denied');
+statusText.textContent='Out of office';
+messageText.textContent='Request denied';
+resultSvg.innerHTML=icons.denied;
+addLog(method,'Denied');
+playTone('denied');
+vibrate([90,50,90]);
+timer=setTimeout(()=>{
+isBusy=false;
+updateModeUI();
+},2600);
+}
 
 function randomVerify(method){
 if(isBusy)return;
+if(systemMode==='lockdown'){lockdownReject(method);return}
 const chance=method==='badge'?.72:.5;
 verifyAccess(Math.random()<chance,method);
 }
 
 function startFaceId(){
 if(isBusy)return;
+if(systemMode==='lockdown'){lockdownReject('Face ID');return}
+
 isBusy=true;
 clearTimeout(timer);
 faceModal.classList.remove('is-approved','is-denied');
@@ -321,6 +429,9 @@ verifyAccess(isApproved,'Face ID',true);
 
 function ringDoorbell(){
 if(isBusy)return;
+if(systemMode==='lockdown'){lockdownReject('Doorbell');return}
+if(systemMode==='out'){outReject('Doorbell');return}
+
 isBusy=true;
 clearTimeout(timer);
 panel.classList.remove('is-approved','is-denied','is-fading');
@@ -340,6 +451,9 @@ timer=setTimeout(reset,3000);
 
 function visitorMode(){
 if(isBusy)return;
+if(systemMode==='lockdown'){lockdownReject('Visitor');return}
+if(systemMode==='out'){outReject('Visitor');return}
+
 isBusy=true;
 clearTimeout(timer);
 panel.classList.remove('is-approved','is-denied','is-fading');
@@ -360,6 +474,7 @@ timer=setTimeout(reset,3200);
 function verifyAccess(isApproved,method,fromFaceId=false){
 isBusy=true;
 clearTimeout(timer);
+
 panel.classList.remove('is-approved','is-denied','is-requesting','is-fading');
 panel.classList.add('is-processing');
 statusText.textContent=fromFaceId?'Checking Face ID':'Verifying badge';
@@ -432,11 +547,8 @@ faceModal.setAttribute('aria-hidden','true');
 
 setTimeout(()=>{
 panel.classList.remove('is-processing','is-approved','is-denied','is-requesting');
-statusText.textContent='Ready to verify';
-messageText.textContent='Tap badge';
-resultSvg.innerHTML=icons.idle;
-lockSvg.innerHTML=icons.locked;
 isBusy=false;
+updateModeUI();
 },220);
 }
 
